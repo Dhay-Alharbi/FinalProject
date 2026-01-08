@@ -27,10 +27,11 @@ npm install -D tailwindcss postcss autoprefixer @types/node @types/react
 npx tailwindcss init -p
 
 
-3. Project Structure
+## Project Structure
+
 FinalProject/
 ├── src/
-│   ├── pages/ #example:
+│   ├── pages/
 │   │   ├── HomePage.js
 │   │   ├── SignInPage.js
 │   │   ├── LoginPage.js
@@ -48,5 +49,8 @@ FinalProject/
 ├── tailwind.config.js
 └── postcss.config.js
 
+└── postcss.config.js
+
 4. Run both frontend and backend
 npm run dev
+
