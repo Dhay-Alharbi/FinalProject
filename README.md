@@ -1,27 +1,27 @@
 ﻿# FinalProject
 
 
-# 1- Download node js https://nodejs.org/en/download version: v24.12.o(LTS)
-
+# 1- Download node js 
+  https://nodejs.org/en/download version: v24.12.0(LTS)
 
 # 2- Install required libraries:
-# Create project folder
+Create project folder:
 mkdir FinalProject
 cd FinalProject
 
-# Initialize npm project
+Initialize npm project:
 npm init -y
 
-# Install React dependencies
+Install React dependencies:
 npm install react react-dom next
 
-# Install UI library
+Install UI library:
 npm install lucide-react
 
-# Install backend dependencies
+Install backend dependencies:
 npm install express mysql2 bcrypt jsonwebtoken cors
 
-# Install dev dependencies
+Install dev dependencies:
 npm install -D tailwindcss postcss autoprefixer @types/node @types/react
 
 npx tailwindcss init -p
@@ -56,4 +56,5 @@ FinalProject/
 
 # 4- Run both frontend and backend
 npm run dev
+
 
