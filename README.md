@@ -40,7 +40,7 @@ FinalProject/
 │   │   ├── BranchesPage.js
 │   │   ├── SubscriptionsPage.js
 │   │   └── UploadVideoPage.js
-│   ├── App.js
+│   ├── app.js
 │   ├── index.js
 │   └── styles/
 │       └── globals.css
