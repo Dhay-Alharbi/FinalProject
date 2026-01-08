@@ -1,10 +1,10 @@
 ﻿# FinalProject
 
 
-1- Download node js https://nodejs.org/en/download version: v24.12.o(LTS)
+# 1- Download node js https://nodejs.org/en/download version: v24.12.o(LTS)
 
 
-2= Install required libraries:
+# 2- Install required libraries:
 # Create project folder
 mkdir FinalProject
 cd FinalProject
@@ -27,7 +27,7 @@ npm install -D tailwindcss postcss autoprefixer @types/node @types/react
 npx tailwindcss init -p
 
 
-## Project Structure
+# 3- Project Structure
 
 ```text
 FinalProject/
@@ -54,6 +54,6 @@ FinalProject/
 └── postcss.config.js
 ```
 
-4. Run both frontend and backend
+# 4- Run both frontend and backend
 npm run dev
 
