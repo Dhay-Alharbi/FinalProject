@@ -29,6 +29,7 @@ npx tailwindcss init -p
 
 ## Project Structure
 
+```text
 FinalProject/
 ├── src/
 │   ├── pages/
@@ -48,8 +49,7 @@ FinalProject/
 ├── package.json
 ├── tailwind.config.js
 └── postcss.config.js
-
-└── postcss.config.js
+```
 
 4. Run both frontend and backend
 npm run dev
