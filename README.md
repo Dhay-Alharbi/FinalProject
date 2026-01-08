@@ -44,6 +44,9 @@ FinalProject/
 │   ├── index.js
 │   └── styles/
 │       └── globals.css
+│   ├── components/
+│   │   ├── Footer.js
+│   │   └── Header.js
 ├── server/
 │   └── server.js
 ├── package.json

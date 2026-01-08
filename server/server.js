@@ -18,9 +18,7 @@ let users = [
     role: 'admin'
   }
 ];
-let branches = [];
-let cameras = [];
-let videos = [];
+
 
 // ========== AUTH ROUTES ==========
 
@@ -80,99 +78,6 @@ app.post('/api/auth/login', (req, res) => {
   }
 });
 
-// ========== BRANCHES ROUTES ==========
-
-// Get all branches
-app.get('/api/branches', (req, res) => {
-  res.json(branches);
-});
-
-// Create branch
-app.post('/api/branches', (req, res) => {
-  try {
-    const { name, location, manager } = req.body;
-    
-    const newBranch = {
-      id: branches.length + 1,
-      name,
-      location,
-      manager,
-      createdAt: new Date().toISOString()
-    };
-    
-    branches.push(newBranch);
-    res.status(201).json(newBranch);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// ========== CAMERAS ROUTES ==========
-
-// Get all cameras
-app.get('/api/cameras', (req, res) => {
-  res.json(cameras);
-});
-
-// Create camera
-app.post('/api/cameras', (req, res) => {
-  try {
-    const { name, branch_id, location } = req.body;
-    
-    const newCamera = {
-      id: cameras.length + 1,
-      name,
-      branch_id,
-      location,
-      status: 'active',
-      createdAt: new Date().toISOString()
-    };
-    
-    cameras.push(newCamera);
-    res.status(201).json(newCamera);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// ========== VIDEOS ROUTES ==========
-
-// Get all videos
-app.get('/api/videos', (req, res) => {
-  res.json(videos);
-});
-
-// Upload video
-app.post('/api/videos', (req, res) => {
-  try {
-    const { filename, filepath, camera_id, branch_id } = req.body;
-    
-    const newVideo = {
-      id: videos.length + 1,
-      filename,
-      filepath,
-      camera_id,
-      branch_id,
-      status: 'pending',
-      createdAt: new Date().toISOString()
-    };
-    
-    videos.push(newVideo);
-    res.status(201).json(newVideo);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// ========== DASHBOARD STATS ==========
-
-app.get('/api/dashboard/stats', (req, res) => {
-  res.json({
-    branches: branches.length,
-    cameras: cameras.length,
-    videos: videos.length
-  });
-});
 
 // Start server
 app.listen(PORT, () => {

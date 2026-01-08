@@ -53,7 +53,7 @@ const HomePage = ({ onNavigate }) => {
       <section className="bg-white">
         <div className="max-w-7xl mx-auto px-6 py-20 text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#0c1f40] mb-6">
-            نظام الذكاء الاصطناعي <span style={{ color: '#154B68' }}> للأعمال</span>
+            نظام الذكاء الاصطناعي للأعمال
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
             راقب فروعك، حلل الفيديوهات لحظيًا، واتخذ قرارات ذكية باستخدام الذكاء الاصطناعي.
@@ -80,24 +80,9 @@ const HomePage = ({ onNavigate }) => {
         {/* Feature Cards */}
         <div className="max-w-7xl mx-auto px-6 grid sm:grid-cols-2 md:grid-cols-3 gap-8">
           <FeatureCard
-            icon={Camera}
-            title="إدارة الكاميرات الذكية"
-            description="راقب وأدر الكاميرات عبر جميع الفروع باستخدام التحليلات المدعومة بالذكاء الاصطناعي."
-          />
-          <FeatureCard
             icon={TrendingUp}
             title="التحليلات الفورية"
-            description="احصل على رؤى فورية وتقارير شاملة لاتخاذ قرارات عمل مستنيرة."
-          />
-          <FeatureCard
-            icon={MapPin}
-            title="دعم متعدد الفروع"
-            description="إدارة سلسة للعمليات عبر مواقع أعمال متعددة."
-          />
-          <FeatureCard
-            icon={Shield}
-            title="أمان متقدم"
-            description="أمان على مستوى المؤسسات مع التحكم في الوصول حسب الدور."
+            description="احصل على رؤى فورية  لاتخاذ قرارات عمل مستنيرة."
           />
           <FeatureCard
             icon={BarChart3}
@@ -107,7 +92,7 @@ const HomePage = ({ onNavigate }) => {
           <FeatureCard
             icon={Zap}
             title="رؤى الذكاء الاصطناعي"
-            description="استفد من خوارزميات التعلم الآلي لاكتشاف الأنماط."
+            description="استفد من الذكاء الاصطناعي لاكتشاف أنماط عملائك وزيادة الربح ."
           />
         </div>
       </section>
@@ -116,13 +101,13 @@ const HomePage = ({ onNavigate }) => {
       <section className="bg-white py-20">
         <div className="max-w-5xl mx-auto bg-[#0c1f40] rounded-2xl p-12 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-            هل أنت مستعد للبدء؟
+            هل أنت مستعد للإشتراك؟
           </h2>
           <p className="text-gray-200 mb-8">
             انضم إلى الشركات التي تطور أعمالها باستخدام الذكاء الاصطناعي.
           </p>
           <button
-            onClick={() => onNavigate('subscriptions')}
+            //onClick={() => onNavigate('')}
             className="px-10 py-4 bg-white text-[#0c1f40] rounded-lg font-bold hover:bg-gray-100"
           >
             صفحة الاشتراكات
