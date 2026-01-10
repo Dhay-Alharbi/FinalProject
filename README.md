@@ -36,10 +36,9 @@ FinalProject/
 │   │   ├── HomePage.js
 │   │   ├── SignInPage.js
 │   │   ├── LoginPage.js
-│   │   ├── DashboardPage.js
-│   │   ├── BranchesPage.js
+│   │   ├── UserPage.js
 │   │   ├── SubscriptionsPage.js
-│   │   └── UploadVideoPage.js
+│   │   └── AdminPage.js
 │   ├── app.js
 │   ├── index.js
 │   └── styles/
@@ -54,12 +53,10 @@ FinalProject/
 └── postcss.config.js
 ```
 
-# 4- Run both frontend and backend
-npm run dev
 
 
-<<<<<<< HEAD
-4. MongoDB
+
+# 4. MongoDB
 Install MongoDB Compass
 https://www.mongodb.com/products/tools/compass
 
@@ -80,7 +77,7 @@ mongodb://localhost:27017
 npm install nodemon concurrently --save-dev
 
 
-
+# 5.run
 npm run server → starts backend on port 5000
 
 npm run client → starts frontend on port 3000/3001
@@ -89,12 +86,3 @@ npm run dev → runs both at the same time
 
 
 
-terminal 1:
-cd "C:\Program Files\MongoDB\Server\8.2\bin" 
-.\mongod --dbpath C:\data\db
-
-terminal 2:
-npm run dev 
-
-=======
->>>>>>> d28ee350a21e60e3cc9cd08c9fadf18775926871
