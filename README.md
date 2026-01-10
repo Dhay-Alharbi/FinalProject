@@ -1,33 +1,33 @@
 ﻿# FinalProject
 
 
-1- Download node js https://nodejs.org/en/download version: v24.12.o(LTS)
+# 1- Download node js 
+  https://nodejs.org/en/download version: v24.12.0(LTS)
 
-
-2= Install required libraries:
-# Create project folder
+# 2- Install required libraries:
+Create project folder:
 mkdir FinalProject
 cd FinalProject
 
-# Initialize npm project
+Initialize npm project:
 npm init -y
 
-# Install React dependencies
+Install React dependencies:
 npm install react react-dom next
 
-# Install UI library
+Install UI library:
 npm install lucide-react
 
-# Install backend dependencies
+Install backend dependencies:
 npm install express mysql2 bcrypt jsonwebtoken cors
 
-# Install dev dependencies
+Install dev dependencies:
 npm install -D tailwindcss postcss autoprefixer @types/node @types/react
 
 npx tailwindcss init -p
 
 
-## Project Structure
+# 3- Project Structure
 
 ```text
 FinalProject/
@@ -54,10 +54,11 @@ FinalProject/
 └── postcss.config.js
 ```
 
-4. Run both frontend and backend
+# 4- Run both frontend and backend
 npm run dev
 
 
+<<<<<<< HEAD
 4. MongoDB
 Install MongoDB Compass
 https://www.mongodb.com/products/tools/compass
@@ -95,3 +96,5 @@ cd "C:\Program Files\MongoDB\Server\8.2\bin"
 terminal 2:
 npm run dev 
 
+=======
+>>>>>>> d28ee350a21e60e3cc9cd08c9fadf18775926871
