@@ -14,7 +14,7 @@ const FeatureCard = ({ icon: Icon, title, description }) => (
 
 // ================= NAV BUTTONS DATA =================
 const navButtons = [
-  { label: 'إنشاء حساب', page: 'signin', type: 'outline' },
+  { label: 'إنشاء حساب', page: 'signup', type: 'outline' },
   { label: 'تسجيل الدخول', page: 'login', type: 'solid' },
 ];
 
@@ -107,7 +107,7 @@ const HomePage = ({ onNavigate }) => {
             انضم إلى الشركات التي تطور أعمالها باستخدام الذكاء الاصطناعي.
           </p>
           <button
-            //onClick={() => onNavigate('')}
+            onClick={() => onNavigate('')}
             className="px-10 py-4 bg-white text-[#0c1f40] rounded-lg font-bold hover:bg-gray-100"
           >
             صفحة الاشتراكات

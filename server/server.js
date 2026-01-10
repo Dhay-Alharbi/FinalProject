@@ -1,85 +1,87 @@
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
-// Middleware
-app.use(cors());
+// ===== Middleware =====
+app.use(cors({ origin: 'http://localhost:3000' })); // يسمح للـ React
 app.use(express.json());
 
-// In-memory storage (temporary - no database)
-let users = [
-  {
-    id: 1,
-    name: 'Admin User',
-    email: 'admin@example.com',
-    password: 'admin123',
-    role: 'admin'
-  }
-];
+// ===== Schema =====
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: { type: String, default: 'user' }
+});
 
+const User = mongoose.model('User', userSchema);
 
-// ========== AUTH ROUTES ==========
+// ===== Routes =====
 
 // Register
-app.post('/api/auth/register', (req, res) => {
+app.post('/api/auth/register', async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
-    
-    // Check if user exists
-    const existingUser = users.find(u => u.email === email);
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
-    
-    const newUser = {
-      id: users.length + 1,
-      name,
-      email,
-      password, // In production, hash this!
-      role: role || 'user'
-    };
-    
-    users.push(newUser);
-    
+    const { name, email, password, role } = req.body; // أضف role هنا
+
+    const exists = await User.findOne({ email });
+    if (exists)
+      return res.status(400).json({ error: 'البريد الإلكتروني موجود مسبقاً' });
+
+    const hashed = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashed, role }); // احفظ role
+    await user.save();
+
     res.status(201).json({
-      message: 'User registered successfully',
-      token: 'fake-jwt-token',
-      user: { id: newUser.id, name, email, role: newUser.role }
+      user: { id: user._id, name, email, role: user.role }
     });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
 // Login
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
+  console.log('Login request body:', req.body); // debug
   try {
     const { email, password } = req.body;
-    
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    
+
+    const user = await User.findOne({ email });
+    console.log('Found user:', user); // debug
+
+    if (!user)
+      return res.status(401).json({ error: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(401).json({ error: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' });
+
+    const token = jwt.sign({ id: user._id }, 'SECRET_KEY', { expiresIn: '1d' });
+
     res.json({
-      token: 'fake-jwt-token',
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      token
     });
   } catch (error) {
+    console.error('Login route error:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
+// ===== Start server after MongoDB connects =====
+mongoose
+  .connect('mongodb://127.0.0.1:27017/Database')
+  .then(() => {
+    console.log('✅ MongoDB connected');
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Backend server running on http://localhost:${PORT}`);
-});
+    app.listen(PORT, () =>
+      console.log(`🚀 Backend running on http://localhost:${PORT}`)
+    );
+  })
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+  });

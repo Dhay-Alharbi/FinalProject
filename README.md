@@ -57,3 +57,41 @@ FinalProject/
 4. Run both frontend and backend
 npm run dev
 
+
+4. MongoDB
+Install MongoDB Compass
+https://www.mongodb.com/products/tools/compass
+
+Install MongoDB 
+https://www.mongodb.com/try/download/community
+
+
+npm install mongoose bcrypt jsonwebtoken
+
+cd "C:\Program Files\MongoDB\Server\8.2\bin" 
+.\mongod --dbpath C:\data\db
+mkdir C:\data\db
+
+Open MongoDB Compass → New Connection → Use:
+mongodb://localhost:27017
+
+
+npm install nodemon concurrently --save-dev
+
+
+
+npm run server → starts backend on port 5000
+
+npm run client → starts frontend on port 3000/3001
+
+npm run dev → runs both at the same time
+
+
+
+terminal 1:
+cd "C:\Program Files\MongoDB\Server\8.2\bin" 
+.\mongod --dbpath C:\data\db
+
+terminal 2:
+npm run dev 
+

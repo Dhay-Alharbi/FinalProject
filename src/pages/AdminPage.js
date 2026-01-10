@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { UserPlus, Users, BarChart3, TrendingUp, Activity, CheckCircle, Clock, Search, Filter, Download } from 'lucide-react';
+import { UserPlus, Users, BarChart3, TrendingUp, Activity, CheckCircle, Clock, Search, LogOut } from 'lucide-react';
 
 const AdminPage = ({ userName = 'المدير', onNavigate }) => {
   const [activePage, setActivePage] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  // Form state for new user
+  const [newUserForm, setNewUserForm] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    role: 'user'
+  });
 
   const [requests, setRequests] = useState([
     { id: 1, name: 'محمد علي', email: 'mohamed@example.com', date: '2024-01-15', status: 'معلق' },
@@ -25,19 +35,101 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
       enterprise: 5,
     },
     recent: [
-      { id: 1, name: 'محمد علي', email: 'mohamed@example.com', plan: 'Premium', status: 'Active', joinDate: '2024-01-15' },
-      { id: 2, name: 'سارة أحمد', email: 'sarah@example.com', plan: 'Basic', status: 'Inactive', joinDate: '2024-01-10' },
-      { id: 3, name: 'خالد يوسف', email: 'khaled@example.com', plan: 'Premium', status: 'Active', joinDate: '2024-01-08' },
-      { id: 4, name: 'فاطمة محمود', email: 'fatima@example.com', plan: 'Enterprise', status: 'Active', joinDate: '2024-01-05' },
+      { id: 1, name: 'محمد علي', email: 'mohamed@example.com', plan: 'مؤسسي', status: 'نشيط', joinDate: '2024-01-15' },
+      { id: 2, name: 'سارة أحمد', email: 'sarah@example.com', plan: 'اساسي', status: 'غير نشط', joinDate: '2024-01-10' },
+      { id: 3, name: 'خالد يوسف', email: 'khaled@example.com', plan: 'مميز', status: 'نشيط', joinDate: '2024-01-08' },
+      { id: 4, name: 'فاطمة محمود', email: 'fatima@example.com', plan: 'مميز', status: 'نشيط', joinDate: '2024-01-05' },
     ],
   });
 
-  const handleChangePage = (page) => setActivePage(page);
+  const handleChangePage = (page) => {
+    setActivePage(page);
+    setMessage({ type: '', text: '' });
+  };
 
   const handleStatusChange = (id, newStatus) => {
     setRequests((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
     );
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    if (onNavigate) {
+      onNavigate('home');
+    }
+  };
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewUserForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Handle add new user with database integration
+  const handleAddUser = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      // API call to backend
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          name: newUserForm.fullName,
+          email: newUserForm.email,
+          password: newUserForm.password,
+          role: newUserForm.role
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'تم إضافة المستخدم بنجاح!' });
+        // Reset form
+        setNewUserForm({
+          fullName: '',
+          email: '',
+          password: '',
+          role: 'user'
+        });
+        
+        // Add to requests list (optional - for immediate display)
+        const newRequest = {
+          id: requests.length + 1,
+          name: newUserForm.fullName,
+          email: newUserForm.email,
+          date: new Date().toISOString().split('T')[0],
+          status: 'معلق'
+        };
+        setRequests(prev => [...prev, newRequest]);
+
+        // Update subscriber count
+        setSubscribersData(prev => ({
+          ...prev,
+          total: prev.total + 1,
+          newThisMonth: prev.newThisMonth + 1
+        }));
+
+      } else {
+        setMessage({ type: 'error', text: data.error || 'فشل في إضافة المستخدم' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'حدث خطأ في الاتصال بالخادم' });
+      console.error('Error adding user:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filteredRequests = requests.filter(req =>
@@ -53,7 +145,7 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
         <aside className="w-72 flex-shrink-0 space-y-3">
           <div className="bg-gray-100 rounded-xl p-4 border border-gray-300">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-[#0C1F40] rounded-full flex items-center justify-center">
                 <span className="text-xl font-bold text-white">{userName.charAt(0)}</span>
               </div>
               <div>
@@ -66,7 +158,7 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
               <button
                 onClick={() => handleChangePage('dashboard')}
                 className={`w-full flex items-center gap-3 p-3 rounded-lg font-medium transition-all ${
-                  activePage === 'dashboard' ? 'bg-blue-400 text-white shadow-lg' : 'text-gray-700 hover:bg-blue-100'
+                  activePage === 'dashboard' ? 'bg-[#0C1F40] text-white shadow-lg' : 'text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 <BarChart3 className="w-5 h-5" />
@@ -76,7 +168,7 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
               <button
                 onClick={() => handleChangePage('addUser')}
                 className={`w-full flex items-center gap-3 p-3 rounded-lg font-medium transition-all ${
-                  activePage === 'addUser' ? 'bg-blue-400 text-white shadow-lg' : 'text-gray-700 hover:bg-blue-100'
+                  activePage === 'addUser' ? 'bg-[#0C1F40] text-white shadow-lg' : 'text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 <UserPlus className="w-5 h-5" />
@@ -86,11 +178,20 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
               <button
                 onClick={() => handleChangePage('subscribers')}
                 className={`w-full flex items-center gap-3 p-3 rounded-lg font-medium transition-all ${
-                  activePage === 'subscribers' ? 'bg-blue-400 text-white shadow-lg' : 'text-gray-700 hover:bg-blue-100'
+                  activePage === 'subscribers' ? 'bg-[#0C1F40] text-white shadow-lg' : 'text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 <Users className="w-5 h-5" />
                 <span>المشتركين</span>
+              </button>
+
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 p-3 rounded-lg font-medium transition-all text-gray-700 hover:bg-gray-200 mt-4"
+              >
+                <LogOut className="w-5 h-5" />
+                <span>تسجيل الخروج</span>
               </button>
             </nav>
           </div>
@@ -140,10 +241,9 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
                     placeholder="البحث عن طلب..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pr-10 pl-4 py-3 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                    className="w-full pr-10 pl-4 py-3 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-[#0C1F40] focus:border-transparent transition"
                   />
                 </div>
-
               </div>
 
               {/* Requests Table */}
@@ -151,16 +251,16 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-blue-50 border-b border-gray-200">
-                        <th className="text-right p-4 text-blue-400 font-semibold">الاسم</th>
-                        <th className="text-right p-4 text-blue-400 font-semibold">البريد الإلكتروني</th>
-                        <th className="text-right p-4 text-blue-400 font-semibold">التاريخ</th>
-                        <th className="text-right p-4 text-blue-400 font-semibold">الحالة</th>
+                      <tr className="bg-gray-50 border-b border-gray-200">
+                        <th className="text-right p-4 text-[#0C1F40] font-semibold">الاسم</th>
+                        <th className="text-right p-4 text-[#0C1F40] font-semibold">البريد الإلكتروني</th>
+                        <th className="text-right p-4 text-[#0C1F40] font-semibold">التاريخ</th>
+                        <th className="text-right p-4 text-[#0C1F40] font-semibold">الحالة</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredRequests.map((req) => (
-                        <tr key={req.id} className="border-b border-gray-100 hover:bg-blue-50 transition-colors">
+                        <tr key={req.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                           <td className="p-4 text-gray-800 font-medium">{req.name}</td>
                           <td className="p-4 text-gray-600">{req.email}</td>
                           <td className="p-4 text-gray-600">{req.date}</td>
@@ -168,7 +268,7 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
                             <select
                               value={req.status}
                               onChange={(e) => handleStatusChange(req.id, e.target.value)}
-                              className={`px-3 py-2 rounded-lg border font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                              className={`px-3 py-2 rounded-lg border font-medium transition focus:outline-none focus:ring-2 focus:ring-[#0C1F40] ${
                                 req.status === 'معلق' 
                                   ? 'bg-yellow-100 border-yellow-300 text-yellow-600' 
                                   : 'bg-green-100 border-green-300 text-green-600'
@@ -194,41 +294,67 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
               <p className="text-gray-500 mb-8">أدخل معلومات المستخدم الجديد</p>
               
               <div className="max-w-2xl">
-                <form className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {[
-                      { label: 'الاسم الأول', placeholder: 'محمد', type: 'text' },
-                      { label: 'اسم العائلة', placeholder: 'علي', type: 'text' },
-                    ].map((field, idx) => (
-                      <div key={idx}>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">{field.label}</label>
-                        <input
-                          type={field.type}
-                          placeholder={field.placeholder}
-                          className="w-full p-3 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
-                        />
-                      </div>
-                    ))}
+                {/* Success/Error Message */}
+                {message.text && (
+                  <div className={`p-4 rounded-lg mb-6 ${
+                    message.type === 'success' 
+                      ? 'bg-green-100 border border-green-300 text-green-700' 
+                      : 'bg-red-100 border border-red-300 text-red-700'
+                  }`}>
+                    {message.text}
+                  </div>
+                )}
+
+                <form onSubmit={handleAddUser} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">الاسم الكامل</label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      required
+                      placeholder="محمد علي أحمد"
+                      value={newUserForm.fullName}
+                      onChange={handleInputChange}
+                      className="w-full p-3 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-[#0C1F40] focus:border-transparent transition"
+                    />
                   </div>
 
-                  {[
-                    { label: 'البريد الإلكتروني', placeholder: 'mohamed@example.com', type: 'email' },
-                    { label: 'رقم الهاتف', placeholder: '+966 5X XXX XXXX', type: 'tel' },
-                    { label: 'كلمة المرور', placeholder: '••••••••', type: 'password' },
-                  ].map((field, idx) => (
-                    <div key={idx}>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">{field.label}</label>
-                      <input
-                        type={field.type}
-                        placeholder={field.placeholder}
-                        className="w-full p-3 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
-                      />
-                    </div>
-                  ))}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">البريد الإلكتروني</label>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      placeholder="mohamed@example.com"
+                      value={newUserForm.email}
+                      onChange={handleInputChange}
+                      className="w-full p-3 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
+                    <input
+                      type="password"
+                      name="password"
+                      required
+                      minLength={6}
+                      placeholder="••••••••"
+                      value={newUserForm.password}
+                      onChange={handleInputChange}
+                      className="w-full p-3 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">يجب أن تكون كلمة المرور 6 أحرف على الأقل</p>
+                  </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">نوع المستخدم</label>
-                    <select className="w-full p-3 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                    <select 
+                      name="role"
+                      value={newUserForm.role}
+                      onChange={handleInputChange}
+                      className="w-full p-3 bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                    >
                       <option value="user">مستخدم عادي</option>
                       <option value="admin">مدير</option>
                     </select>
@@ -236,10 +362,20 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
 
                   <button 
                     type="submit"
-                    className="w-full bg-blue-400 text-white py-4 rounded-lg font-bold hover:bg-blue-500 transition shadow-lg flex items-center justify-center gap-2"
+                    disabled={loading}
+                    className="w-full bg-[#0C1F40] text-white py-4 rounded-lg font-bold hover:bg-[#1a3a5c] transition shadow-lg flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
-                    <UserPlus className="w-5 h-5" />
-                    إضافة المستخدم
+                    {loading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>جاري الإضافة...</span>
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="w-5 h-5" />
+                        <span>إضافة المستخدم</span>
+                      </>
+                    )}
                   </button>
                 </form>
               </div>
@@ -257,8 +393,8 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
                 {[
                   { label: 'إجمالي المشتركين', value: subscribersData.total, icon: Users, bg: 'bg-blue-100', color: 'text-blue-800' },
                   { label: 'المشتركين النشطين', value: subscribersData.active, icon: CheckCircle, bg: 'bg-green-100', color: 'text-green-800' },
-                  { label: 'غير النشطين', value: subscribersData.inactive, icon: Activity, bg: 'bg-red-100', color: 'text-red-800' },
-                  { label: 'جديد هذا الشهر', value: subscribersData.newThisMonth, icon: TrendingUp, bg: 'bg-blue-100', color: 'text-blue-800' },
+                  { label: 'المشتركين غير النشطين', value: subscribersData.inactive, icon: Activity, bg: 'bg-red-100', color: 'text-red-800' },
+                  { label: 'المشتركين الجديدين لهذا الشهر ', value: subscribersData.newThisMonth, icon: TrendingUp, bg: 'bg-blue-100', color: 'text-blue-800' },
                 ].map((stat, idx) => (
                   <div key={idx} className={`p-6 rounded-xl shadow ${stat.bg} flex flex-col items-start`}>
                     <stat.icon className={`w-8 h-8 mb-2 ${stat.color}`} />
@@ -289,24 +425,24 @@ const AdminPage = ({ userName = 'المدير', onNavigate }) => {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-blue-50 border-b border-gray-200">
-                        <th className="text-right p-4 text-blue-400 font-semibold">الاسم</th>
-                        <th className="text-right p-4 text-blue-400 font-semibold">البريد</th>
-                        <th className="text-right p-4 text-blue-400 font-semibold">الخطة</th>
-                        <th className="text-right p-4 text-blue-400 font-semibold">تاريخ الانضمام</th>
-                        <th className="text-right p-4 text-blue-400 font-semibold">الحالة</th>
+                      <tr className="bg-gray-50 border-b border-gray-200">
+                        <th className="text-right p-4 text-[#0C1F40] font-semibold">الاسم</th>
+                        <th className="text-right p-4 text-[#0C1F40] font-semibold">البريد</th>
+                        <th className="text-right p-4 text-[#0C1F40] font-semibold">الخطة</th>
+                        <th className="text-right p-4 text-[#0C1F40] font-semibold">تاريخ الانضمام</th>
+                        <th className="text-right p-4 text-[#0C1F40] font-semibold">الحالة</th>
                       </tr>
                     </thead>
                     <tbody>
                       {subscribersData.recent.map((sub) => (
-                        <tr key={sub.id} className="border-b border-gray-100 hover:bg-blue-50 transition-colors">
+                        <tr key={sub.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                           <td className="p-4 text-gray-800 font-medium">{sub.name}</td>
                           <td className="p-4 text-gray-600">{sub.email}</td>
                           <td className="p-4 text-gray-600">{sub.plan}</td>
                           <td className="p-4 text-gray-600">{sub.joinDate}</td>
                           <td className="p-4">
                             <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                              sub.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
+                              sub.status === 'نشيط' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
                             }`}>
                               {sub.status}
                             </span>
