@@ -86,29 +86,32 @@ npm run dev → runs both at the same time
 
 
 
+## 📁 Project Structure
+
+```text
 CapstoneProject/
-├── BackEnd/
-│   ├── config/             # ملفات الإعدادات (مثل ربط قاعدة البيانات)
-│   │   └── db.js
-│   ├── middleware/         # ملفات التحقق والوسائط البرمجية
-│   │   ├── auth.js
-│   │   └── error.js
-│   ├── models/             # تعريف نماذج البيانات (Database Schemas)
-│   │   ├── Alert.js
-│   │   ├── Branch.js
-│   │   ├── Subscription.js
-│   │   └── User.js
-│   ├── routes/             # تعريف المسارات (API Endpoints)
-│   │   └── [أضف ملفات المسارات هنا، مثلاً: userRoutes.js]
-│   ├── controllers/        # (مقترح) منطق العمليات لكل مسار لفصل الكود عن الـ routes
-│   ├── .env                # ملف المتغيرات البيئية (لا يرفع على GitHub)
-│   ├── .env.example        # نسخة توضيحية للمتغيرات البيئية (يرفع على GitHub)
-│   ├── .gitignore          # لتحديد الملفات التي لا تريد رفعها (node_modules, .env)
-│   ├── package.json        # معلومات المشروع والمكتبات المستخدمة
-│   ├── package-lock.json
-│   └── server.js           # نقطة الدخول الرئيسية للتطبيق
-├── FrontEnd/               # (إذا كنت ستبدأ في صفحة الشات بوت التي ذكرتها سابقاً)
-└── README.md               # شرح للمشروع وكيفية تشغيله (مهم جداً لـ GitHub)
+├── 📂 BackEnd/
+│   ├── 📂 config/           # Database connection & configurations
+│   │   └── 📄 db.js
+│   ├── 📂 controllers/      # Business logic (e.g., OpenRouter API logic)
+│   │   └── 📄 chatbotController.js
+│   ├── 📂 middleware/       # Authentication & Error handling
+│   │   ├── 📄 auth.js
+│   │   └── 📄 error.js
+│   ├── 📂 models/           # Mongoose schemas / Database models
+│   │   ├── 📄 Alert.js
+│   │   ├── 📄 Branch.js
+│   │   ├── 📄 Subscription.js
+│   │   └── 📄 User.js
+│   ├── 📂 routes/           # API Endpoints
+│   │   └── 📄 userRoutes.js
+│   ├── 📄 .env              # Environment variables (Private)
+│   ├── 📄 .gitignore        # Files to ignore in Git
+│   ├── 📄 package.json      # Dependencies and scripts
+│   └── 📄 server.js         # Entry point of the application
+├── 📂 FrontEnd/             # Chatbot UI & Client-side code
+└── 📄 README.md             # Project documentation
+
 
 
 
